@@ -1,0 +1,26 @@
+html, body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}
+
+#app, #scroller {
+  height: 100%;
+}
+
+#scroller {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.recycle-item {
+  padding: 10px 0;
+  box-sizing: border-box;
+}
+
+.photo {
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}

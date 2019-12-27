@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "strict": true,
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "pretty": true,
+    "strictNullChecks": false,
+    "downlevelIteration": true,
+    "declaration": true,
+    "lib": ["es2019", "dom"]
+  },
+  "include": ["src/**/*"]
+}
