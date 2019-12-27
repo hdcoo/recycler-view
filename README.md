@@ -537,4 +537,4 @@ class MySource extends Source<MyDataType> {
 
 ## 结语
 
-Recycler 搭配不同的 Source 和 Renderer 可以实现多种效果。目前作者也在探索和改进中，下一步目标是省略 height 和 scrollTop，让使用更加方便（虽然毫无头绪）
+Recycler 搭配不同的 Source 和 Renderer 可以实现多种效果。目前作者也在探索和改进中，下一步目标是省略 Source 中的 getScrollTop，让使用更加方便（虽然毫无头绪）
