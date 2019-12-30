@@ -1,6 +1,7 @@
 .DS_Store
-.idea/
-node_modules/
-dist/
+.idea
+node_modules
+dist
+coverage
 npm-debug.log
 yarn-error.log
