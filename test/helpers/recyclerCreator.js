@@ -1,10 +1,11 @@
 import { Recycler, Source, Renderer } from "src";
 
-class MySource extends Source {
-  constructor() {
+export class MySource extends Source {
+  constructor(key) {
     super();
     
     this.data = [];
+    this.key = key;
     
     this.fetch();
   }
@@ -44,7 +45,7 @@ class MySource extends Source {
   }
 }
 
-class MyRenderer extends Renderer {
+export class MyRenderer extends Renderer {
   createElement(data) {
     return document.createElement('div');
   }
@@ -54,9 +55,20 @@ class MyRenderer extends Renderer {
   }
 }
 
-export default function createRecycler(scroller, container) {
+export function createNormalRecycler(scroller, container) {
   return new Recycler(scroller, new MySource(), {
     container,
     renderer: new MyRenderer()
   })
+}
+
+export function createMultiRunwaysRecycler(scroller, container) {
+  return new Recycler(
+    scroller,
+    [new MySource(), new MySource()],
+    {
+      container,
+      renderer: new MyRenderer()
+    }
+  )
 }

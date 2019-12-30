@@ -1,27 +1,15 @@
-import createRecycler from "./helpers/recyclerCreator";
+import { createNormalRecycler } from "./helpers/recyclerCreator";
 import { createNormalScroller } from "./helpers/scrollerCreator";
 import { getTranslateY, initBody } from "./helpers/util";
+import hook from "./helpers/hook";
 
 describe('HTMLElement as scroller', function () {
   const { scroller, container } = createNormalScroller();
   
-  initBody(scroller);
-  
-  beforeEach(function () {
-    this.recycler = createRecycler(scroller, container);
-    if (!this.getRunway) {
-      this.getRunway = function () {
-        return this.recycler.getCurrentRunway();
-      }
-    }
-  });
-  
-  afterEach(function () {
-    this.recycler.destroy();
-  });
-  
-  afterAll(function () {
-    document.body.removeChild(scroller);
+  hook({
+    createRecycler: () => createNormalRecycler(scroller, container),
+    destroy: () => document.body.removeChild(scroller),
+    el: scroller
   });
   
   it('getters should be correct', function () {
@@ -35,7 +23,7 @@ describe('HTMLElement as scroller', function () {
   });
 
   it('elements count should less than element limit after init', function () {
-    expect([...this.getRunway().screenNodes].length).toBeLessThan(16);
+    expect(this.getRunway().screenNodes.size).toBeLessThan(16);
   });
 
   it('elements count should less than element limit during scroll', async function () {
@@ -44,7 +32,7 @@ describe('HTMLElement as scroller', function () {
     await this.recycler.scrollTo(7892);
     await this.recycler.scrollTo(486);
   
-    expect(container.childElementCount).toBe([...this.getRunway().screenNodes].length);
+    expect(container.childElementCount).toBe(this.getRunway().screenNodes.size);
     expect(container.childElementCount).toBeLessThan(16);
   });
   
