@@ -118,9 +118,9 @@ const recycler = new Recycler(scroller: HTMLElement, sources: ISource | ISource[
 
 runway 代表一个数据源（source）所创建出的滚动列表，它包含该列表目前的状态，比如目前的 scrollTop、在屏幕上首个项目在所有项目中的 index、数据源、屏幕上的节点集合等信息。
 
-一个 recycler 可以包含多个 runway，可由 recycler 创建时传入的 sources 数组自动创建，也可在 recycler 创建后调用 recycler.addRunway(source) 动态添加。调用 recycler.switchRunway(key) 可切换当前 runway，即在屏幕上渲染另外一组视图
+一个 recycler 可以包含多个 runway，可由 recycler 创建时传入的 sources 数组自动创建，也可在 recycler 创建后调用 recycler.addRunway(source) 动态添加。调用 recycler.checkout(key) 可切换当前 runway，即在屏幕上渲染另外一组视图
 
-switchRunway(key: string)：key 由 source 中的 key 字段指定。若由 sources 数组创建，且 source 不包含 key 字段，则会根据 source 在 sources 数组中的位置确定 key 值；若由 addRunway(source: ISource) 创建，且 source 不包含 key 字段，则把当前 runways.length + 1 作为此 runway 的 key 值
+checkout(key: string)：key 由 source 中的 key 字段指定。若由 sources 数组创建，且 source 不包含 key 字段，则会根据 source 在 sources 数组中的位置确定 key 值；若由 addRunway(source: ISource) 创建，且 source 不包含 key 字段，则把当前 runways.length + 1 作为此 runway 的 key 值
 
 <h3>2. 参数说明</h3>
 <h3>scroller</h3>
@@ -170,7 +170,7 @@ switchRunway(key: string)：key 由 source 中的 key 字段指定。若由 sour
 |       destroy        |                     () => void                     |         | 销毁 Recycler 实例，这里不会销毁 Source 与 Renderer，请自行销毁 |
 | updatePreservedSpace | (preserved: {top: number, bottom: number}) => void |         | 更新预留空间。预留空间推荐用这个方法进行更新，因为有一些后置动作需要处理 |
 |     cleanScreen      |                     () => void                     |         | 清屏。移除屏幕上所有节点，并调用 renderer.release 释放它们   |
-|     switchRunway     |  (name: string, disableRender?: boolean) => void   |         | 切换 runway                                                  |
+|     checkout     |  (name: string, disableRender?: boolean) => void   |         | 切换 runway                                                  |
 |      addRunway       |              (source: Source) => void              |         | 增加一个 runway                                              |
 |     resetRunway      |              (name?: string) => void               |         | 重置 runway。如果 name 为空，则重置当前正在使用的 runway     |
 |     getScrollTop     |                    () => number                    |         | 获取 scroller 的真实 scrollTop                               |
@@ -197,7 +197,7 @@ recycler.on(Recycler.Events.Update, (recycler: IRecycler, disableRenderer: boole
 |      Name      |    opportunity     | Description                                                  |
 | :------------: | :----------------: | ------------------------------------------------------------ |
 |  Initialized   |      初始化时      | 只会触发一次                                                 |
-| RunwaySwitched |   切换 runway 时   | 每次调用 switchRunway 时触发，在视图更新之后触发             |
+| RunwaySwitched |   切换 runway 时   | 每次调用 checkout 时触发，在视图更新之后触发             |
 |    Resized     |  浏览器窗口变化时  | 如果 handleReize===true，则在 window.resize 时触发           |
 |   Scrolling    |   滚动过程中触发   | delta 参数为本次触发与上次触发之间滚动的距离，可以近似看成滚动速度 |
 | ScrollAtStart  |  滚动到顶部时触发  |                                                              |
