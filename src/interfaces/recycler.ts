@@ -51,7 +51,7 @@ export interface IRecycler<T> extends IEvents {
   destroy(): void;
   updatePreservedSpace(preserved: {top: number, bottom: number}): void;
   cleanScreen(): void;
-  switchRunway(name: string, disableRender?: boolean): void;
+  checkout(name: string, disableRender?: boolean): Promise<void>;
   addRunway(source: ISource<T>): void;
   resetRunway(name?: string): void;
   getCurrentRunway(): IRunway<T>;

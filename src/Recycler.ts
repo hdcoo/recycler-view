@@ -74,8 +74,8 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     this.threshold = options.threshold || 5;
 
     // 允许多个实例，可以在实例之间切换（为了能在同一个 scroller 中切换不同的内容，比如搜索结果和原列表之间切换）
+    this.initRunways(sources);
     this.activatedRunway = Recycler.getDefaultRunwayKey(sources);
-    this.runways = Recycler.initRunways(sources);
 
     // 初始化 Dom 事件监听器
     this.scrollListener = new ScrollListener(this.scroller);
@@ -209,18 +209,22 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     return runway;
   }
 
-  public switchRunway(name: string, disableRender: boolean = false) {
+  public async checkout(name: string, disableRender: boolean = false) {
+    let runway;
+
     if (!this.runways[name]) {
       throw Exceptions.Error(`${name} is not exists in runways`);
     }
 
     this.cleanScreen();
     this.activatedRunway = name;
-
-    const runway = this.getRunway();
+    runway = this.getRunway();
 
     this.update(true);
-    !disableRender && this.scrollTo(runway.scrollTop);
+
+    if (!disableRender) {
+      await this.scrollTo(runway.scrollTop);
+    }
 
     this.emit(Recycler.Events.RunwaySwitched, this);
   }
@@ -236,7 +240,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
       throw Exceptions.Error(`${source.key} is already exists`);
     }
 
-    this.runways[key] = Recycler.getInitialRunway(source);
+    this.runways[key] = Recycler.getInitialRunway<T>(source);
   }
 
   public resetRunway(name?: string) {
@@ -245,7 +249,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
 
     this.cleanScreen(key);
     execute(() => runway.source.clean(this));
-    Object.assign(runway, Recycler.getInitialRunway(runway.source));
+    Object.assign(runway, Recycler.getInitialRunway<T>(runway.source));
   }
 
   public getScrollTop(): number {
@@ -523,13 +527,27 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     return (source.getRenderer && source.getRenderer(index, this)) || this.renderer;
   }
 
+  protected initRunways(sources: ISource<T> | Array<ISource<T>>) {
+    this.runways = {};
+
+    if (Array.isArray(sources)) {
+      for (const source of sources) {
+        this.addRunway(source);
+      }
+    } else if (sources) {
+      this.addRunway(sources as ISource<T>);
+    } else {
+      throw Exceptions.TypeError('sources is invalid');
+    }
+  }
+
   protected static getDefaultRunwayKey<U>(sources: ISource<U> | Array<ISource<U>>): string {
     if (!sources) {
       throw Exceptions.TypeError('sources is not defined');
     }
 
     if (Array.isArray(sources)) {
-      return sources[0].key;
+      return sources[0].key || '0';
     }
 
     return sources.key || '0';
@@ -548,23 +566,6 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
       screenNodes: new Set(),
       source,
     };
-  }
-
-  protected static initRunways<U>(sources: ISource<U> | Array<ISource<U>>): IRunwayMap<U> {
-    if (Array.isArray(sources)) {
-      return sources.reduce((acc: IRunwayMap<U>, source, index) => {
-        acc[source.key || index] = this.getInitialRunway(source);
-        return acc;
-      }, {});
-    }
-
-    if (sources) {
-      return {
-        0: this.getInitialRunway(sources)
-      };
-    }
-
-    throw Exceptions.TypeError('sources is invalid');
   }
 
   protected static removeScreenNodes<U>(runway: IRunway<U>) {
