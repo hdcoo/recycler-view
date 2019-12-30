@@ -26,7 +26,7 @@ export default abstract class Renderer<T> implements IRenderer<T> {
     return el;
   }
 
-  public abstract update(el: HTMLElement, data: T, recycler: IRecycler<T>): HTMLElement;
+  public abstract update(el: HTMLElement, data: T, recycler: IRecycler<T>): void;
 
   public abstract createElement(data?: T): HTMLElement;
 

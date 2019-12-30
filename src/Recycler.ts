@@ -157,7 +157,8 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
         const index = Number(i);
         const renderer = this.getRenderer(index);
         const data = runway.source.getData(index, this);
-        execute(() => renderer.update($el, data, this));
+
+        renderer.update($el, data, this);
       }
     } catch (err) {
       throw err;

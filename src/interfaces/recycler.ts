@@ -64,7 +64,7 @@ export interface IQueue {
 
 export interface IRenderer<T> {
   render(data: T, recycler: IRecycler<T>): HTMLElement;
-  update(el: HTMLElement, data: T, recycler: IRecycler<T>): HTMLElement;
+  update(el: HTMLElement, data: T, recycler: IRecycler<T>): void;
 
   release?(el: HTMLElement, recycler: IRecycler<T>): void;
   releaseAll?(recycler: IRecycler<T>): void;
