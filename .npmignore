@@ -1,3 +1,5 @@
 dev/
+template/
 babel.config.js
-webpack.config.js
+karma.conf.js
+rollup.config.js
