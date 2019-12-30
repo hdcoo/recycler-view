@@ -43,7 +43,7 @@ export interface IRecycler<T> extends IEvents {
   runwayItemsOpposite: number;
   threshold: number;
 
-  scrollTo(position: number): void;
+  scrollTo(position: number): Promise<void>;
   getScrollTop(): number;
   update(disableRender?: boolean): void;
   forceUpdate(): void;

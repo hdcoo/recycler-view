@@ -125,7 +125,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     });
   }
 
-  public scrollTo(position: number) {
+  public scrollTo(position: number): Promise<void> {
     const maxScrollTop = this.getRunwayMaxScrollTop();
 
     if (position > maxScrollTop) {
@@ -133,7 +133,10 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     }
 
     this.scrollerOperations.scrollTo(position);
-    setTimeout(() => this.update());
+
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(this.update()));
+    });
   }
 
   public forceUpdate() {
@@ -178,7 +181,9 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
   public destroy() {
     this.scrollListener.destroy();
     this.resizeListener.destroy();
+    this.cleanScreen();
     this.scrollerOperations.removeChild(this.sentinel);
+    this.scrollerOperations.scrollTo(0);
     this.runways = null;
   }
 
