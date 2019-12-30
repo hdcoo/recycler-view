@@ -12,7 +12,7 @@ const webpackConfig = {
   module: {
     rules: [
       {
-        test: /\.js/,
+        test: /\.js$/,
         exclude: /node_modules/,
         use: ['babel-loader']
       },
@@ -20,9 +20,16 @@ const webpackConfig = {
         test: /\.ts$/,
         exclude: /node_modules/,
         use: ['ts-loader']
+      },
+      {
+        test: /\.ts$/,
+        exclude: /(node_modules|\.spec\.ts$)/,
+        loader: 'istanbul-instrumenter-loader',
+        enforce: 'post'
       }
     ]
-  }
+  },
+  devtool: 'inline-source-map'
 };
 
 process.env.CHROME_BIN = puppeteer.executablePath();
@@ -38,14 +45,27 @@ module.exports = function (config) {
       'test/**/*'
     ],
     preprocessors: {
-      'test/**/*': ['webpack'],
-      'src/**/*': ['webpack']
+      'test/**/*.js': ['webpack'],
+      'src/**/*.ts': ['webpack']
     },
     plugins: [
       'karma-jasmine',
       'karma-webpack',
-      'karma-chrome-launcher'
+      'karma-chrome-launcher',
+      'karma-coverage-istanbul-reporter'
     ],
+    reporters: [
+      'coverage-istanbul'
+    ],
+    coverageIstanbulReporter: {
+      fixWebpackSourcePaths: true,
+      reports: ['html'],
+      dir: path.join(__dirname, 'coverage')
+    },
+    webpackMiddleware: {
+      stats: 'errors-only',
+      logLevel: 'silent'
+    },
     webpack: webpackConfig,
   });
 };
