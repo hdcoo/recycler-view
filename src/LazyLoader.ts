@@ -43,10 +43,6 @@ export default class LazyLoader {
       });
     }
 
-    if (!/^https?:\/\//.test(binding.value)) {
-      return el.setAttribute('lazy', 'error');
-    }
-
     LazyLoader.attemptCancel(elementInfo);
     elementInfo.binding = binding;
 
