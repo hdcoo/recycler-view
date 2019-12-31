@@ -45,6 +45,10 @@ export class MySource extends Source {
   }
 }
 
+export class SourceWithNoData extends MySource {
+  async fetch(recycler) {}
+}
+
 export class MyRenderer extends Renderer {
   createElement(data) {
     return document.createElement('div');
