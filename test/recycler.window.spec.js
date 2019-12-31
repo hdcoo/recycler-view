@@ -58,4 +58,29 @@ describe('Window as scroller', function () {
       expect(getTranslateY(el)).toBe(runway.source.getScrollTop(index));
     }
   });
+  
+  it('render correct with preserved space', async function () {
+    let runway;
+    const { recycler } = this;
+    
+    recycler.updatePreservedSpace({
+      top: 500,
+      bottom: 100
+    });
+    
+    runway = recycler.getCurrentRunway();
+    expect(recycler.sentinel.style.top).toBe(runway.source.getMaxScrollHeight() + recycler.topPreserved + recycler.bottomPreserved + 'px');
+    
+    await recycler.scrollTo(400);
+    runway = recycler.getCurrentRunway();
+    
+    expect(runway.firstAttachedItem).toBe(0);
+    expect(runway.lastAttachedItem).toBe(11);
+    
+    await recycler.scrollTo(3000);
+    runway = recycler.getCurrentRunway();
+    
+    expect(runway.firstAttachedItem).toBe(23);
+    expect(runway.lastAttachedItem).toBe(37);
+  });
 });

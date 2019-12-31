@@ -1,6 +1,6 @@
 import { createNormalRecycler } from "./helpers/recyclerCreator";
 import { createNormalScroller } from "./helpers/scrollerCreator";
-import { getTranslateY, initBody } from "./helpers/util";
+import { getTranslateY, sleep } from "./helpers/util";
 import hook from "./helpers/hook";
 
 describe('HTMLElement as scroller', function () {
@@ -55,5 +55,57 @@ describe('HTMLElement as scroller', function () {
       const { index } = el.dataset;
       expect(getTranslateY(el)).toBe(runway.source.getScrollTop(index));
     }
+  });
+  
+  it('render correct with preserved space', async function () {
+    let runway;
+    const { recycler } = this;
+    
+    recycler.updatePreservedSpace({
+      top: 500,
+      bottom: 100
+    });
+  
+    runway = recycler.getCurrentRunway();
+    expect(recycler.sentinel.style.top).toBe(runway.source.getMaxScrollHeight() + recycler.topPreserved + recycler.bottomPreserved + 'px');
+    
+    await recycler.scrollTo(400);
+    runway = recycler.getCurrentRunway();
+    
+    expect(runway.firstAttachedItem).toBe(0);
+    expect(runway.lastAttachedItem).toBe(11);
+    
+    await recycler.scrollTo(3000);
+    runway = recycler.getCurrentRunway();
+
+    expect(runway.firstAttachedItem).toBe(23);
+    expect(runway.lastAttachedItem).toBe(37);
+  });
+  
+  it('forceUpdate & inPlaceUpdate should rerender every item', function () {
+    const { recycler } = this;
+    const runway = recycler.getRunway();
+    
+    recycler.forceUpdate();
+    
+    for (const el of runway.screenNodes.values()) {
+      expect(el.renderCount).toBe(2);
+    }
+    
+    recycler.inPlaceUpdate();
+  
+    for (const el of runway.screenNodes.values()) {
+      expect(el.renderCount).toBe(3);
+    }
+  });
+  
+  it('load more should be executed', async function () {
+    const { recycler } = this;
+    const runway = recycler.getRunway();
+  
+    await recycler.scrollTo(9900);
+    await sleep(10);
+    
+    expect(runway.source.getLength()).toBe(200);
   });
 });

@@ -51,6 +51,7 @@ export class MyRenderer extends Renderer {
   }
   
   update(el, data, recycler) {
+    el.renderCount = (el.renderCount || 0) + 1;
     el.textContent = data;
   }
 }
