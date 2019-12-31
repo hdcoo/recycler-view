@@ -59,7 +59,7 @@ module.exports = function (config) {
     ],
     coverageIstanbulReporter: {
       fixWebpackSourcePaths: true,
-      reports: ['html'],
+      reports: ['clover', 'html'],
       dir: path.join(__dirname, 'coverage')
     },
     webpackMiddleware: {
