@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'src/**/*'
+      - 'test/**/*'
+      - 'karma.conf.js'
 
 jobs:
   test:
