@@ -2,6 +2,7 @@
 
 [![Actions Status](https://github.com/hdcoo/recycler-view/workflows/Publish/badge.svg)](https://github.com/hdcoo/recycler-view/actions)
 [![codecov](https://codecov.io/gh/hdcoo/recycler-view/branch/master/graph/badge.svg)](https://codecov.io/gh/hdcoo/recycler-view)
+[![npm version](https://badge.fury.io/js/recycler-view.svg)](http://badge.fury.io/js/recycler-view)
 
 recycler 提供一个高性能、高度定制、Dom 元素可复用的滚动列表。主要包括三个部分，Recycler（核心控制）、Source（数据源）、Renderer（渲染器）。使用时需注意以下几点：
 
@@ -11,6 +12,15 @@ recycler 提供一个高性能、高度定制、Dom 元素可复用的滚动列�
 4. 图片列表最好搭配 LazyLoader 一起使用，否则可能会有大片白屏。
 5. Renderer 可以搭配任何框架，但是推荐使用原生 js 进行 Dom 创建和变更，一般框架使用的 Virtual Dom 在这样的场景下比较损耗性能。
 6. 性能瓶颈大概率出现在 Renderer 上，所以请小心控制您的 Renderer 渲染时间，包括 js 执行和 layout、paint、compute style 等步骤所消耗时间。
+
+## 安装
+```
+npm i recycler-view
+```
+或
+```
+yarn add recycler-view
+```
 
 ## 基本概念
 
