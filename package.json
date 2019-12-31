@@ -9,6 +9,11 @@
     "build:watch": "rollup -c -w",
     "test": "karma start"
   },
+  "keywords": [
+    "recycle",
+    "scroll",
+    "infinite"
+  ],
   "main": "dist/index.js",
   "author": "hdcoo",
   "license": "MIT",
