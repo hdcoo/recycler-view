@@ -101,7 +101,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     }
 
     // 初始化哨兵位置
-    this.setRunwayPosition();
+    this.setSentinelPosition();
 
     // 监听事件，根据 scroller 需要不同的监听方式
     this.scrollListener.on(this.onScroll.bind(this));
@@ -173,7 +173,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
   public update(disableRender?: boolean) {
     this.scrollerHeight = this.scrollerOperations.getOffsetHeight();
     this.getRunway().runwayMaxScrollTop = this.getRunwayMaxScrollTop();
-    this.setRunwayPosition();
+    this.setSentinelPosition();
     this.emit(Recycler.Events.Update, this, disableRender);
     !disableRender && this.onScroll();
   }
@@ -192,7 +192,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
 
     top != null && (this.topPreserved = top);
     bottom != null && (this.bottomPreserved = bottom);
-    this.setRunwayPosition();
+    this.update();
   }
 
   public cleanScreen(name?: string) {
@@ -273,11 +273,11 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     if (currentScrollTop === 0) {
       runway.firstScreenItem = 0;
     } else {
-      runway.firstScreenItem = this.getFirstScreenItem(runway.firstScreenItem, runwayScrollTop);
+      runway.firstScreenItem = this.getFirstScreenItem(runway.firstScreenItem, Math.max(runwayScrollTop - this.topPreserved, 0));
     }
 
     // 计算在屏幕内的最后一个元素
-    runway.lastScreenItem = this.getLastScreenItem(runway.lastScreenItem, runwayScrollTop + this.scrollerHeight);
+    runway.lastScreenItem = this.getLastScreenItem(runway.lastScreenItem, Math.max(runwayScrollTop - this.topPreserved + this.scrollerHeight, 0));
 
     // 发送事件
     this.emit(Recycler.Events.Scrolling, this, delta);
@@ -411,7 +411,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     }
   }
 
-  protected setRunwayPosition() {
+  protected setSentinelPosition() {
     this.sentinel.style.top = this.getMaxScrollHeight() + 'px';
   }
 
@@ -484,13 +484,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
   }
 
   protected getMaxScrollHeight(): number {
-    const runway = this.getRunway();
-
-    if (runway.source.getLength(this) - 1 < 0) {
-      return this.topPreserved + this.bottomPreserved;
-    }
-
-    return runway.source.getMaxScrollHeight(this) + this.bottomPreserved + this.topPreserved;
+    return this.getRunway().source.getMaxScrollHeight(this) + this.bottomPreserved + this.topPreserved;
   }
 
   protected async maybeLoadMore(end: number): Promise<void> {
