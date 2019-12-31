@@ -1,4 +1,4 @@
-import { Recycler, Source, Renderer } from "src";
+import { Recycler, Source, Renderer, LazyLoader } from "src";
 
 export class MySource extends Source {
   constructor(key) {
@@ -56,6 +56,30 @@ export class MyRenderer extends Renderer {
   }
 }
 
+export class RendererWithLazyLoader extends Renderer {
+  constructor() {
+    super();
+    
+    this.lazyLoader = new LazyLoader();
+  }
+  
+  mount(recycler) {
+    this.lazyLoader.mount(recycler);
+  }
+  
+  createElement(data) {
+    return document.createElement('div');
+  }
+  
+  update(el, data, recycler) {
+    el.renderCount = (el.renderCount || 0) + 1;
+    this.lazyLoader.update(el, {
+      value: Math.random() > 0.5 ? 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' : 'https://test',
+      type: 'background'
+    });
+  }
+}
+
 export function createNormalRecycler(scroller, container) {
   return new Recycler(scroller, new MySource(), {
     container,
@@ -72,4 +96,18 @@ export function createMultiRunwaysRecycler(scroller, container) {
       renderer: new MyRenderer()
     }
   )
+}
+
+export function createRecyclerWithLazyLoader(scroller, container) {
+  const recycler = new Recycler(scroller, new MySource(), {
+    container,
+    renderer: new RendererWithLazyLoader()
+  });
+  
+  recycler.on(Recycler.Events.Initialized, () => {
+    recycler.renderer.mount(recycler);
+    recycler.forceUpdate();
+  });
+  
+  return recycler;
 }
