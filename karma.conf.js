@@ -23,7 +23,7 @@ const webpackConfig = {
       },
       {
         test: /\.ts$/,
-        exclude: /(node_modules|\.spec\.ts$)/,
+        exclude: /(node_modules|\.spec\.ts$|util\.ts|src\/interfaces)/,
         loader: 'istanbul-instrumenter-loader',
         enforce: 'post'
       }
