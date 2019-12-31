@@ -31,7 +31,7 @@ export class MySource extends Source {
   }
   
   getScrollTop(index, recycler) {
-    return Math.max(0, index - 1) * this.getHeight();
+    return index * this.getHeight();
   }
   
   fetch(recycler) {

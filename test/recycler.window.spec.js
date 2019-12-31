@@ -17,7 +17,7 @@ describe('Window as scroller', function () {
     
     expect(source.getWidth()).toBe('100%');
     expect(source.getHeight()).toBe(100);
-    expect(source.getScrollTop(30)).toBe(29 * 100);
+    expect(source.getScrollTop(30)).toBe(30 * 100);
     expect(source.getMaxScrollHeight()).toBe(100 * 100);
     expect(source.getLength()).toBe(100);
   });
@@ -45,7 +45,7 @@ describe('Window as scroller', function () {
     runway = this.recycler.getCurrentRunway();
     
     expect(runway.firstAttachedItem).toBe(28);
-    expect(runway.lastAttachedItem).toBe(42);
+    expect(runway.lastAttachedItem).toBe(41);
   });
   
   it('transform should be correct', async function () {
@@ -75,12 +75,12 @@ describe('Window as scroller', function () {
     runway = recycler.getCurrentRunway();
     
     expect(runway.firstAttachedItem).toBe(0);
-    expect(runway.lastAttachedItem).toBe(11);
+    expect(runway.lastAttachedItem).toBe(10);
     
     await recycler.scrollTo(3000);
     runway = recycler.getCurrentRunway();
     
     expect(runway.firstAttachedItem).toBe(23);
-    expect(runway.lastAttachedItem).toBe(37);
+    expect(runway.lastAttachedItem).toBe(36);
   });
 });
