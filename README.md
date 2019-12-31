@@ -1,7 +1,7 @@
 # recycler-view
 
 [![Actions Status](https://github.com/hdcoo/recycler-view/workflows/Publish/badge.svg)](https://github.com/hdcoo/recycler-view/actions)
-[![Actions Status](https://github.com/hdcoo/recycler-view/workflows/Test/badge.svg)](https://github.com/hdcoo/recycler-view/actions)
+[![codecov](https://codecov.io/gh/hdcoo/recycler-view/branch/master/graph/badge.svg)](https://codecov.io/gh/hdcoo/recycler-view)
 
 recycler 提供一个高性能、高度定制、Dom 元素可复用的滚动列表。主要包括三个部分，Recycler（核心控制）、Source（数据源）、Renderer（渲染器）。使用时需注意以下几点：
 
