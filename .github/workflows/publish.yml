@@ -18,10 +18,13 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - name: yarn install & publish
+    - name: build
       run: |
         yarn
         npm run build
-        npm publish
+    - name: create .npmrc
+      run: echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" >> ~/.npmrc
       env:
         NPM_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+    - name: publish
+      run: npm publish
