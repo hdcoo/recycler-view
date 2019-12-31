@@ -1,6 +1,7 @@
 test/
 template/
 coverage/
+.github/
 babel.config.js
 karma.conf.js
 rollup.config.js
