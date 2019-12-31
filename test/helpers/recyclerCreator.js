@@ -74,7 +74,7 @@ export class RendererWithLazyLoader extends Renderer {
   update(el, data, recycler) {
     el.renderCount = (el.renderCount || 0) + 1;
     this.lazyLoader.update(el, {
-      value: Math.random() > 0.5 ? 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' : 'https://test',
+      value: Math.random() > 0.5 ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAAZSURBVDhPY3hAIhjVQAwY1UAMGHQaHjwAAD9boB9HiJ0WAAAAAElFTkSuQmCC' : 'https://test',
       type: 'background'
     });
   }

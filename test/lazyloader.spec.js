@@ -24,8 +24,24 @@ describe('LazyLoader', function () {
     await recycler.scrollTo(0);
     await sleep(300);
     await recycler.scrollTo(10000);
-    await sleep(300);
   
     expect(recycler.renderer.lazyLoader.elementsInfo.size).toBe(15);
+  });
+  
+  it('image should be rendered', async function () {
+    const { recycler } = this;
+  
+    await recycler.scrollTo(5486);
+    await sleep(300);
+    await recycler.scrollTo(5496);
+    
+    for (const el of recycler.getRunway().screenNodes.values()) {
+      const state = el.getAttribute('lazy');
+      if (state === 'loaded' || state === 'complete') {
+        expect(el.style.backgroundImage).toBe('url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAAZSURBVDhPY3hAIhjVQAwY1UAMGHQaHjwAAD9boB9HiJ0WAAAAAElFTkSuQmCC")');
+      } else if (state === 'error') {
+        expect(el.style.backgroundImage).toBe('url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")');
+      }
+    }
   });
 });
