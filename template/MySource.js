@@ -22,7 +22,7 @@ export default class MySource extends Source {
   }
   
   getScrollTop(index, recycler) {
-    return Math.max(index - 1, 0) * this.getHeight();
+    return index * this.getHeight();
   }
   
   getMaxScrollHeight(recycler) {
