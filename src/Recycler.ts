@@ -437,7 +437,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     const sourceLastIndex = runway.source.getLength(this) - 1;
 
     if (runway.source.getScrollTop(i, this) + runway.source.getHeight(i, this) < scrollTop) {
-      while (i < sourceLastIndex && runway.source.getScrollTop(++i, this) + runway.source.getHeight(i, this) < scrollTop) {
+      while (i < sourceLastIndex && runway.source.getScrollTop(++i, this) + runway.source.getHeight(i, this) <= scrollTop) {
         // do nothing
       }
     } else {
@@ -459,7 +459,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     const sourceLastIndex = runway.source.getLength(this) - 1;
 
     if (runway.source.getScrollTop(i, this) > scrollTop) {
-      while (i > 0 && runway.source.getScrollTop(--i, this) > scrollTop) {
+      while (i > 0 && runway.source.getScrollTop(--i, this) >= scrollTop) {
         // do nothing
       }
     } else {
