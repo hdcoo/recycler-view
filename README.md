@@ -67,7 +67,7 @@ class MySource extends Source<DataType> {
   }
   
   public getScrollTop(index: number): number {
-    return Math.max(index - 1, 0) * this.getHeight();
+    return index * this.getHeight();
   }
   
   public getMaxScrollHeight(): number {
