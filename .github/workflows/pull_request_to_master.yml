@@ -12,9 +12,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
+    - name: setup node
+      uses: actions/setup-node@v1
       with:
         node-version: 12.x
     - name: yarn install, test
-    - run: yarn install
-    - run: npm run test
+      run: yarn install && npm run test
