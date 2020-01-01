@@ -23,6 +23,12 @@ npm i recycler-view
 yarn add recycler-view
 ```
 
+## 兼容性
+<pre>
+iOS >= 8
+Android >= 4.4
+</pre>
+
 ## 基本概念
 
 **项目：** 以下简称称滚动列表里的每一个滚动项目为「项目」
