@@ -5,6 +5,7 @@ import ResizeListener from './eventListeners/ResizeListener';
 import {
   Exceptions,
   execute,
+  logger
 } from './helpers/util';
 import {
   IRecycler,
@@ -211,13 +212,18 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
 
   public async checkout(name: string, disableRender: boolean = false) {
     let runway;
+    let normalizedName = String(name);
 
-    if (!this.runways[name]) {
-      throw Exceptions.Error(`${name} is not exists in runways`);
+    if (!this.runways[normalizedName]) {
+      throw Exceptions.Error(`${normalizedName} is not exists in runways`);
+    }
+
+    if (this.activatedRunway === normalizedName) {
+      return logger.info(`checkout - already in ${normalizedName}`);
     }
 
     this.cleanScreen();
-    this.activatedRunway = name;
+    this.activatedRunway = normalizedName;
     runway = this.getRunway();
 
     this.update(true);
