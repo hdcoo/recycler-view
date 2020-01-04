@@ -1,4 +1,4 @@
-import {getAnimationEndEventName, loadImage, throttle} from './helpers/util';
+import {getAnimationEndEventName, loadImage, throttle, isFunction} from './helpers/util';
 import {IRecycler, RecyclerEvents} from './interfaces/recycler';
 import {IBinding, IElementInfo, IHTMLElement, ImageTypes, ILazyLoaderOptions, IPlaceholders} from './interfaces/lazyload';
 
@@ -57,26 +57,27 @@ export default class LazyLoader {
       const cache = this.binding;
 
       LazyLoader.attemptCancel(this);
-      this.loader = loadImage(this.binding.value);
       this.render = null;
+      this.cancel = loadImage(
+        this.binding.value,
+        () => {
+          el.__recycler_lazy_loading__ = false;
 
-      this.loader.then(() => {
-        if (cache.value === this.binding.value) {
-          el.removeEventListener(ANIMATION_END, el.__recycler_lazy_animationend__);
-          el.__recycler_lazy_animationend__ = () => {
-            el.setAttribute('lazy', 'complete');
-          };
-          el.addEventListener(ANIMATION_END, el.__recycler_lazy_animationend__);
-          el.setAttribute('lazy', 'loaded');
-          LazyLoader.setSrc(el, this.binding);
-        }
-      }).catch((err) => {
-        if (err !== 'canceled') {
+          if (cache.value === this.binding.value) {
+            el.removeEventListener(ANIMATION_END, el.__recycler_lazy_animationend__);
+            el.__recycler_lazy_animationend__ = () => {
+              el.setAttribute('lazy', 'complete');
+            };
+            el.addEventListener(ANIMATION_END, el.__recycler_lazy_animationend__);
+            el.setAttribute('lazy', 'loaded');
+            LazyLoader.setSrc(el, this.binding);
+          }
+        },
+        () => {
+          el.__recycler_lazy_loading__ = false;
           el.setAttribute('lazy', 'error');
         }
-      }).finally(() => {
-        el.__recycler_lazy_loading__ = false;
-      });
+      );
     };
   }
 
@@ -92,9 +93,7 @@ export default class LazyLoader {
     let elementInfo = this.elementsInfo.get(el);
 
     if (!elementInfo) {
-      elementInfo = {
-        loader: null
-      };
+      elementInfo = {};
       this.elementsInfo.set(el, elementInfo);
     }
 
@@ -112,7 +111,7 @@ export default class LazyLoader {
   }
 
   private static attemptCancel(elementInfo: IElementInfo) {
-    elementInfo.loader && elementInfo.loader.cancel && elementInfo.loader.cancel();
-    elementInfo.loader = null;
+    isFunction(elementInfo.cancel) && elementInfo.cancel();
+    elementInfo.cancel = null;
   }
 }

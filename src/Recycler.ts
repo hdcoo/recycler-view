@@ -5,7 +5,8 @@ import ResizeListener from './eventListeners/ResizeListener';
 import {
   Exceptions,
   execute,
-  logger
+  logger,
+  isFunction
 } from './helpers/util';
 import {
   IRecycler,
@@ -35,6 +36,8 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
   protected scrollerHeight: number;
   protected activatedRunway: string;
   protected runways: IRunwayMap<T>;
+
+  private hasPromise = typeof Promise !== 'undefined';
 
   protected readonly scrollerOperations: ScrollerOperations;
   protected readonly scrollListener: ScrollListener;
@@ -121,13 +124,17 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     }
 
     // 调用 onInitialized
-    Promise.resolve().then(() => {
-      this.emit(Recycler.Events.Initialized, this);
-    });
+    setTimeout(() => this.emit(Recycler.Events.Initialized, this));
   }
 
-  public scrollTo(position: number): Promise<void> {
+  public scrollTo(position: number, done?: () => void) {
     const maxScrollTop = this.getRunwayMaxScrollTop();
+    const update = (resolve?: () => void) => {
+      setTimeout(() => {
+        this.update();
+        isFunction(resolve) ? resolve() : execute(done);
+      });
+    };
 
     if (position > maxScrollTop) {
       position = maxScrollTop;
@@ -135,9 +142,11 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
 
     this.scrollerOperations.scrollTo(position);
 
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(this.update()));
-    });
+    if (this.hasPromise) {
+      return new Promise(update);
+    }
+
+    update();
   }
 
   public forceUpdate() {
@@ -210,9 +219,9 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     return runway;
   }
 
-  public async checkout(name: string, disableRender: boolean = false) {
+  public checkout(name: string, done?: () => void) {
     let runway;
-    let normalizedName = String(name);
+    const normalizedName = String(name);
 
     if (!this.runways[normalizedName]) {
       throw Exceptions.Error(`${normalizedName} is not exists in runways`);
@@ -228,11 +237,14 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
 
     this.update(true);
 
-    if (!disableRender) {
-      await this.scrollTo(runway.scrollTop);
+    if (this.hasPromise) {
+      return this.scrollTo(runway.scrollTop).then(() => this.emit(Recycler.Events.RunwaySwitched, this));
     }
 
-    this.emit(Recycler.Events.RunwaySwitched, this);
+    this.scrollTo(runway.scrollTop, () => {
+      this.emit(Recycler.Events.RunwaySwitched, this);
+      execute(done);
+    });
   }
 
   public addRunway(source: ISource<T>) {
@@ -493,7 +505,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     return this.getRunway().source.getMaxScrollHeight(this) + this.bottomPreserved + this.topPreserved;
   }
 
-  protected async maybeLoadMore(end: number): Promise<void> {
+  protected maybeLoadMore(end: number) {
     const runway = this.getRunway();
     const isInitial = !runway.source.getLength(this);
 
@@ -502,22 +514,42 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
       !runway.requestInProgress &&
       runway.source.fetch
     ) {
-      const activatedRunwayCache = this.activatedRunway;
       runway.requestInProgress = true;
 
-      try {
-        const data = await runway.source.fetch(this);
-
-        if (!data) {
+      let resolved: boolean = false;
+      const activatedRunwayCache = this.activatedRunway;
+      const done = (moreLoaded: boolean) => {
+        if (resolved) {
           return;
         }
+
+        resolved = true;
+        runway.requestInProgress = false;
+
+        if (!moreLoaded) {
+          return;
+        }
+
         if (this.activatedRunway === activatedRunwayCache) {
           this.update();
         }
-      } catch (e) {
-        // keep silence
-      } finally {
+      };
+      const rejected = () => {
+        if (resolved) {
+          return;
+        }
+
+        resolved = true;
         runway.requestInProgress = false;
+      };
+
+      const fetchReturn = runway.source.fetch(this, done);
+
+      if (
+        (this.hasPromise && fetchReturn instanceof Promise) ||
+        (fetchReturn && isFunction(fetchReturn.then) && isFunction(fetchReturn.catch))
+      ) {
+        fetchReturn.then(done).catch(rejected);
       }
     }
   }
