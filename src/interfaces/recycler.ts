@@ -43,7 +43,7 @@ export interface IRecycler<T> extends IEvents {
   runwayItemsOpposite: number;
   threshold: number;
 
-  scrollTo(position: number, done?: () => void): void;
+  scrollTo(position: number, done?: () => void): void | Promise<void>;
   getScrollTop(): number;
   update(disableRender?: boolean): void;
   forceUpdate(): void;
@@ -51,7 +51,7 @@ export interface IRecycler<T> extends IEvents {
   destroy(): void;
   updatePreservedSpace(preserved: {top: number, bottom: number}): void;
   cleanScreen(): void;
-  checkout(name: string, done?: () => void): void;
+  checkout(name: string, done?: () => void): void | Promise<void>;
   addRunway(source: ISource<T>): void;
   resetRunway(name?: string): void;
   getCurrentRunway(): IRunway<T>;

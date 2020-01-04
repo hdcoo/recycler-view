@@ -129,7 +129,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
 
   public scrollTo(position: number, done?: () => void) {
     const maxScrollTop = this.getRunwayMaxScrollTop();
-    const update = (resolve?: () => void) => {
+    const update = (resolve?: (result: void) => void) => {
       setTimeout(() => {
         this.update();
         isFunction(resolve) ? resolve() : execute(done);
@@ -238,7 +238,9 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     this.update(true);
 
     if (this.hasPromise) {
-      return this.scrollTo(runway.scrollTop).then(() => this.emit(Recycler.Events.RunwaySwitched, this));
+      return this.scrollTo(runway.scrollTop).then(() => {
+        this.emit(Recycler.Events.RunwaySwitched, this);
+      });
     }
 
     this.scrollTo(runway.scrollTop, () => {
