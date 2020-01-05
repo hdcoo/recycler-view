@@ -1,4 +1,5 @@
 import rollupPluginTs from '@wessberg/rollup-plugin-ts';
+import buble from "@rollup/plugin-buble";
 
 const banner = `/*!
  * recycler-view.js v1.0.0
@@ -15,7 +16,13 @@ export default [
       banner
     },
     plugins: [
-      rollupPluginTs()
+      rollupPluginTs({
+        browserslist: false,
+        tsconfig: {
+          target: 'es6'
+        }
+      }),
+      buble()
     ]
   },
   {
@@ -26,7 +33,13 @@ export default [
       banner
     },
     plugins: [
-      rollupPluginTs()
+      rollupPluginTs({
+        browserslist: false,
+        tsconfig: {
+          target: 'es6'
+        }
+      }),
+      buble()
     ]
   }
 ]
