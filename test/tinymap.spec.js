@@ -1,4 +1,4 @@
-import TinyMap from "../src/helpers/TinyMap";
+import { TinyMap } from "../src/helpers/TinyMap";
 
 describe('TinyMap', function () {
   beforeEach(function () {
@@ -47,7 +47,7 @@ describe('TinyMap', function () {
     tinyMap.set(d, d.value);
     tinyMap.set(c, c.value);
 
-    tinyMap.map((key, value) => {
+    tinyMap.forEach((value) => {
       expect(order[i++].value).toBe(value);
     })
   });
@@ -87,7 +87,7 @@ describe('TinyMap', function () {
     tinyMap.set(a, a.value);
     tinyMap.set(c, c.value);
 
-    tinyMap.map((key, value) => {
+    tinyMap.forEach((value, key) => {
       expect(order[i++].value).toBe(value);
       tinyMap.delete(key);
     });
