@@ -1,4 +1,5 @@
-import { Recycler, Source, Renderer, LazyLoader } from "src";
+import { Recycler, Source, Renderer } from "src";
+import LazyLoader from "src/LazyLoader";
 
 export class MySource extends Source {
   constructor(key) {

@@ -101,6 +101,9 @@ describe('TinySet', function () {
 
     tinySet.map((item) => {
       expect(order[i++].value).toBe(item.value);
+      tinySet.delete(item);
     });
+
+    expect(tinySet.size).toBe(0);
   });
 });
