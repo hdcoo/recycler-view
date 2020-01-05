@@ -5,11 +5,6 @@ const HTMLWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   mode: "development",
   entry: path.join(__dirname, 'app.js'),
-  resolve: {
-    alias: {
-      dist: path.resolve(packageData.main)
-    }
-  },
   module: {
     rules: [
       {

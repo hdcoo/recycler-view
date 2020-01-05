@@ -1,6 +1,6 @@
 import './app.css';
 
-import { Recycler } from 'dist';
+import { Recycler } from '../dist/recycler-view';
 import MyRenderer from "./MyRenderer";
 import MySource from "./MySource";
 

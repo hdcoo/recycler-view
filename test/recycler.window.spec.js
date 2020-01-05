@@ -52,11 +52,11 @@ describe('Window as scroller', function () {
     await this.recycler.scrollTo(5630);
     
     const runway = this.getRunway();
-    
-    for (const el of runway.screenNodes.values()) {
+
+    runway.screenNodes.map((el) => {
       const { index } = el.dataset;
       expect(getTranslateY(el)).toBe(runway.source.getScrollTop(index));
-    }
+    });
   });
   
   it('render correct with preserved space', async function () {

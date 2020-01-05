@@ -1,9 +1,9 @@
-import { Renderer, LazyLoader } from 'dist';
+import { Renderer, LazyLoader } from '../dist/recycler-view';
 
 export default class MyRenderer extends Renderer {
   constructor() {
     super();
-    
+
     this.lazyload = new LazyLoader({
       loading: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAAZSURBVDhPY3hAIhjVQAwY1UAMGHQaHjwAAD9boB9HiJ0WAAAAAElFTkSuQmCC'
     });

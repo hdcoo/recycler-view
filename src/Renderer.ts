@@ -1,9 +1,10 @@
+import TinySet from './helpers/TinySet';
 import { IRenderer, IRecycler, IQueue } from './interfaces/recycler';
 
 export default abstract class Renderer<T> implements IRenderer<T> {
   protected queue: IQueue = {
-    unused: [],
-    using: new Set()
+    using: new TinySet(),
+    unused: []
   };
 
   public render(data: T, recycler: IRecycler<T>): HTMLElement {
@@ -47,8 +48,6 @@ export default abstract class Renderer<T> implements IRenderer<T> {
   }
 
   protected mapUsing(fn: (el: HTMLElement) => void) {
-    for (const el of this.queue.using.values()) {
-      fn(el);
-    }
+    this.queue.using.map((el) => fn(el));
   }
 }

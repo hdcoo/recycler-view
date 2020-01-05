@@ -1,5 +1,3 @@
-import { ILoader } from '../interfaces/lazyload';
-
 function makeMessage(message: string): string {
   return `[ recycler ] ${message}`;
 }
@@ -57,29 +55,21 @@ export function throttle(fn: (...args: any[]) => any, threshold: number = 200) {
   };
 }
 
-export function loadImage(src: string): ILoader {
+export function loadImage(src: string, onload: () => void, onerror: () => void) {
   const el = new Image();
 
-  const promise: ILoader = new Promise((resolve, reject) => {
-    el.onload = () => {
-      delete promise.cancel;
-      resolve();
-    };
-    el.onerror = (err) => {
-      delete promise.cancel;
-      reject(err);
-    };
-    el.src = src;
-  });
-
-  promise.cancel = () => {
+  const cancel = () => {
     el.onerror('canceled');
     el.onerror = null;
     el.onload = null;
     el.src = '';
   };
 
-  return promise;
+  el.onload = onload;
+  el.onerror = onerror;
+  el.src = src;
+
+  return cancel;
 }
 
 export function getAnimationEndEventName() {
@@ -98,4 +88,26 @@ export function getAnimationEndEventName() {
 
 export function getRAFExecutor() {
   return requestAnimationFrame || webkitRequestAnimationFrame || setTimeout;
+}
+
+export function isFunction(target: any) {
+  return typeof target === 'function';
+}
+
+export function mapObject<T>(obj: {[key: string]: T}, handler: (value: T, key: string) => void) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      handler(obj[key], key);
+    }
+  }
+}
+
+export function uuid() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    // tslint:disable-next-line
+    const r = Math.random() * 16 | 0;
+    // tslint:disable-next-line
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
 }

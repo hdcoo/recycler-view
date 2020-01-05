@@ -36,9 +36,7 @@ export default abstract class Listener {
     if (!this.ticking) {
       requestAnimationFrame(() => {
         try {
-          for (const handler of this.handlers) {
-            handler(e);
-          }
+          this.handlers.forEach((handler) => handler(e));
         } catch (e) {
           // keep silence
         } finally {

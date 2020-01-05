@@ -14,12 +14,8 @@ export interface IBinding {
   type?: ImageTypes;
 }
 
-export interface ILoader extends Promise<void> {
-  cancel?(): void;
-}
-
 export interface IElementInfo {
-  loader?: ILoader;
+  cancel?: () => void;
   binding?: IBinding;
   render?(): void;
 }

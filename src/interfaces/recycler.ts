@@ -1,4 +1,5 @@
 import { IEvents } from './events';
+import { ITinySet } from './TinySet';
 
 export type IChangedNodes = Array<{node: HTMLElement, index: number}>;
 
@@ -23,7 +24,7 @@ export interface IRunway<T> {
   requestInProgress: boolean;
   runwayMaxScrollTop: number;
   nodes: {[key: string]: HTMLElement};
-  screenNodes: Set<HTMLElement>;
+  screenNodes: ITinySet<HTMLElement>;
   source: ISource<T>;
 }
 
@@ -43,7 +44,7 @@ export interface IRecycler<T> extends IEvents {
   runwayItemsOpposite: number;
   threshold: number;
 
-  scrollTo(position: number): Promise<void>;
+  scrollTo(position: number, done?: () => void): void | Promise<void>;
   getScrollTop(): number;
   update(disableRender?: boolean): void;
   forceUpdate(): void;
@@ -51,7 +52,7 @@ export interface IRecycler<T> extends IEvents {
   destroy(): void;
   updatePreservedSpace(preserved: {top: number, bottom: number}): void;
   cleanScreen(): void;
-  checkout(name: string, disableRender?: boolean): Promise<void>;
+  checkout(name: string, done?: () => void): void | Promise<void>;
   addRunway(source: ISource<T>): void;
   resetRunway(name?: string): void;
   getCurrentRunway(): IRunway<T>;
@@ -59,7 +60,7 @@ export interface IRecycler<T> extends IEvents {
 
 export interface IQueue {
   unused: HTMLElement[];
-  using: Set<HTMLElement>;
+  using: ITinySet<HTMLElement>;
 }
 
 export interface IRenderer<T> {
@@ -80,12 +81,12 @@ export interface ISource<T> {
   getData(index: number, recycler: IRecycler<T>): T;
   getLength(recycler: IRecycler<T>): number;
 
-  fetch?(recycler: IRecycler<T>): Promise<boolean>;
+  fetch?(recycler: IRecycler<T>, done: (moreLoaded: boolean) => void): any;
   getRenderer?(index: number, recycler: IRecycler<T>): IRenderer<T>;
   getOffset?(index: number, recycler: IRecycler<T>): {x: string, y: number};
   getColumn?(index: number, recycler: IRecycler<T>): number;
   clean?(recycler: IRecycler<T>): void;
-  refresh?(recycler: IRecycler<T>): Promise<boolean>;
+  refresh?(recycler: IRecycler<T>, done: () => void): any;
   mount?(recycler: IRecycler<T>): void;
 }
 

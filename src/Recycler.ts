@@ -2,10 +2,13 @@ import EventEmitter from './helpers/EventEmitter';
 import ScrollerOperations from './helpers/ScrollerOperations';
 import ScrollListener from './eventListeners/ScrollListener';
 import ResizeListener from './eventListeners/ResizeListener';
+import TinySet from './helpers/TinySet';
 import {
   Exceptions,
   execute,
-  logger
+  logger,
+  isFunction,
+  mapObject
 } from './helpers/util';
 import {
   IRecycler,
@@ -35,6 +38,8 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
   protected scrollerHeight: number;
   protected activatedRunway: string;
   protected runways: IRunwayMap<T>;
+
+  private hasPromise = typeof Promise !== 'undefined';
 
   protected readonly scrollerOperations: ScrollerOperations;
   protected readonly scrollListener: ScrollListener;
@@ -111,9 +116,9 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     }
 
     // 遍历 runways，并调用对应的 source.mount() 方法，可以在此监听一些事件（比如配置 lazyload）
-    for (const [, runway] of Object.entries(this.runways)) {
+    mapObject(this.runways, (runway) => {
       execute(() => runway.source.mount(this));
-    }
+    });
 
     // 渲染视图（如果 sources 不为空的话）
     if (this.getRunway().source.getLength(this) > 0) {
@@ -121,13 +126,17 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     }
 
     // 调用 onInitialized
-    Promise.resolve().then(() => {
-      this.emit(Recycler.Events.Initialized, this);
-    });
+    setTimeout(() => this.emit(Recycler.Events.Initialized, this));
   }
 
-  public scrollTo(position: number): Promise<void> {
+  public scrollTo(position: number, done?: () => void) {
     const maxScrollTop = this.getRunwayMaxScrollTop();
+    const update = (resolve?: (result: void) => void) => {
+      setTimeout(() => {
+        this.update();
+        isFunction(resolve) ? resolve() : execute(done);
+      });
+    };
 
     if (position > maxScrollTop) {
       position = maxScrollTop;
@@ -135,9 +144,11 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
 
     this.scrollerOperations.scrollTo(position);
 
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(this.update()));
-    });
+    if (this.hasPromise) {
+      return new Promise(update);
+    }
+
+    update();
   }
 
   public forceUpdate() {
@@ -157,13 +168,13 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
 
       this.isInPlaceUpdate = true;
 
-      for (const [i, $el] of Object.entries(runway.nodes)) {
-        const index = Number(i);
+      mapObject(runway.nodes, (el, key) => {
+        const index = Number(key);
         const renderer = this.getRenderer(index);
         const data = runway.source.getData(index, this);
 
-        renderer.update($el, data, this);
-      }
+        renderer.update(el, data, this);
+      });
     } catch (err) {
       throw err;
     } finally {
@@ -210,9 +221,9 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     return runway;
   }
 
-  public async checkout(name: string, disableRender: boolean = false) {
+  public checkout(name: string, done?: () => void) {
     let runway;
-    let normalizedName = String(name);
+    const normalizedName = String(name);
 
     if (!this.runways[normalizedName]) {
       throw Exceptions.Error(`${normalizedName} is not exists in runways`);
@@ -228,11 +239,16 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
 
     this.update(true);
 
-    if (!disableRender) {
-      await this.scrollTo(runway.scrollTop);
+    if (this.hasPromise) {
+      return this.scrollTo(runway.scrollTop).then(() => {
+        this.emit(Recycler.Events.RunwaySwitched, this);
+      });
     }
 
-    this.emit(Recycler.Events.RunwaySwitched, this);
+    this.scrollTo(runway.scrollTop, () => {
+      this.emit(Recycler.Events.RunwaySwitched, this);
+      execute(done);
+    });
   }
 
   public addRunway(source: ISource<T>) {
@@ -424,7 +440,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
   protected setNodesStyles(nodes: IChangedNodes) {
     const runway = this.getRunway();
 
-    for (const { node, index } of nodes) {
+    nodes.forEach(({node, index}) => {
       const {x, y} = execute(() => runway.source.getOffset(index, this), {x: '0', y: 0});
 
       node.dataset.index = String(index);
@@ -434,7 +450,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
       node.style.width = runway.source.getWidth(index, this);
       node.dataset.column = execute(() => String(runway.source.getColumn(index, this)), '1');
       node.style.transform = node.style.webkitTransform = this.transformTemplate(x, runway.source.getScrollTop(index, this) + y);
-    }
+    });
   }
 
   protected getFirstScreenItem(initialAnchorItem: number, scrollTop: number): number {
@@ -493,7 +509,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     return this.getRunway().source.getMaxScrollHeight(this) + this.bottomPreserved + this.topPreserved;
   }
 
-  protected async maybeLoadMore(end: number): Promise<void> {
+  protected maybeLoadMore(end: number) {
     const runway = this.getRunway();
     const isInitial = !runway.source.getLength(this);
 
@@ -502,22 +518,42 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
       !runway.requestInProgress &&
       runway.source.fetch
     ) {
-      const activatedRunwayCache = this.activatedRunway;
       runway.requestInProgress = true;
 
-      try {
-        const data = await runway.source.fetch(this);
-
-        if (!data) {
+      let resolved: boolean = false;
+      const activatedRunwayCache = this.activatedRunway;
+      const done = (moreLoaded: boolean) => {
+        if (resolved) {
           return;
         }
+
+        resolved = true;
+        runway.requestInProgress = false;
+
+        if (!moreLoaded) {
+          return;
+        }
+
         if (this.activatedRunway === activatedRunwayCache) {
           this.update();
         }
-      } catch (e) {
-        // keep silence
-      } finally {
+      };
+      const rejected = () => {
+        if (resolved) {
+          return;
+        }
+
+        resolved = true;
         runway.requestInProgress = false;
+      };
+
+      const fetchReturn = runway.source.fetch(this, done);
+
+      if (
+        (this.hasPromise && fetchReturn instanceof Promise) ||
+        (fetchReturn && isFunction(fetchReturn.then) && isFunction(fetchReturn.catch))
+      ) {
+        fetchReturn.then(done).catch(rejected);
       }
     }
   }
@@ -531,9 +567,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     this.runways = {};
 
     if (Array.isArray(sources)) {
-      for (const source of sources) {
-        this.addRunway(source);
-      }
+      sources.forEach((source) => this.addRunway(source));
     } else if (sources) {
       this.addRunway(sources as ISource<T>);
     } else {
@@ -563,17 +597,17 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
       requestInProgress: false,
       runwayMaxScrollTop: 0,
       nodes: {},
-      screenNodes: new Set(),
+      screenNodes: new TinySet(),
       source,
     };
   }
 
   protected static removeScreenNodes<U>(runway: IRunway<U>) {
-    for (const node of runway.screenNodes.values()) {
+    runway.screenNodes.map((node) => {
       if (node.parentNode) {
         node.parentNode.removeChild(node);
         runway.screenNodes.delete(node);
       }
-    }
+    });
   }
 }

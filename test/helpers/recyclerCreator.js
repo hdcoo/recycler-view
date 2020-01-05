@@ -50,6 +50,10 @@ export class SourceWithNoData extends MySource {
 }
 
 export class MyRenderer extends Renderer {
+  constructor() {
+    super();
+  }
+
   createElement(data) {
     return document.createElement('div');
   }
@@ -63,7 +67,6 @@ export class MyRenderer extends Renderer {
 export class RendererWithLazyLoader extends Renderer {
   constructor() {
     super();
-    
     this.lazyLoader = new LazyLoader();
   }
   
