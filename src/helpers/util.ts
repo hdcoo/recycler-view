@@ -94,6 +94,14 @@ export function isFunction(target: any) {
   return typeof target === 'function';
 }
 
+export function mapObject<T>(obj: {[key: string]: T}, handler: (value: T, key: string) => void) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      handler(obj[key], key);
+    }
+  }
+}
+
 export function uuid() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     // tslint:disable-next-line

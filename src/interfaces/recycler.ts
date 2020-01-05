@@ -60,7 +60,7 @@ export interface IRecycler<T> extends IEvents {
 
 export interface IQueue {
   unused: HTMLElement[];
-  using: Set<HTMLElement>;
+  using: ITinySet<HTMLElement>;
 }
 
 export interface IRenderer<T> {

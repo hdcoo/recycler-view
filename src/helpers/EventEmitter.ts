@@ -26,13 +26,13 @@ export default class EventEmitter implements IEvents {
       return this;
     }
 
-    for (const handler of handlers) {
+    handlers.forEach((handler) => {
       try {
         handler(...args);
       } catch (e) {
         logger.error(e.stack);
       }
-    }
+    });
 
     return this;
   }
@@ -43,9 +43,7 @@ export default class EventEmitter implements IEvents {
       return this;
     }
 
-    for (const key of keys) {
-      delete this.events[key];
-    }
+    keys.forEach((key) => delete this.events[key]);
 
     return this;
   }

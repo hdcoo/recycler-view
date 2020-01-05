@@ -1,7 +1,11 @@
+import TinySet from './helpers/TinySet';
 import { IRenderer, IRecycler, IQueue } from './interfaces/recycler';
 
 export default abstract class Renderer<T> implements IRenderer<T> {
-  protected abstract queue: IQueue;
+  protected queue: IQueue = {
+    using: new TinySet(),
+    unused: []
+  };
 
   public render(data: T, recycler: IRecycler<T>): HTMLElement {
     // 从 queue.unused 中弹出一个节点
@@ -44,8 +48,6 @@ export default abstract class Renderer<T> implements IRenderer<T> {
   }
 
   protected mapUsing(fn: (el: HTMLElement) => void) {
-    for (const el of this.queue.using.values()) {
-      fn(el);
-    }
+    this.queue.using.map((el) => fn(el));
   }
 }

@@ -7,7 +7,8 @@ import {
   Exceptions,
   execute,
   logger,
-  isFunction
+  isFunction,
+  mapObject
 } from './helpers/util';
 import {
   IRecycler,
@@ -115,9 +116,9 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     }
 
     // 遍历 runways，并调用对应的 source.mount() 方法，可以在此监听一些事件（比如配置 lazyload）
-    for (const [, runway] of Object.entries(this.runways)) {
+    mapObject(this.runways, (runway) => {
       execute(() => runway.source.mount(this));
-    }
+    });
 
     // 渲染视图（如果 sources 不为空的话）
     if (this.getRunway().source.getLength(this) > 0) {
@@ -167,13 +168,13 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
 
       this.isInPlaceUpdate = true;
 
-      for (const [i, $el] of Object.entries(runway.nodes)) {
-        const index = Number(i);
+      mapObject(runway.nodes, (el, key) => {
+        const index = Number(key);
         const renderer = this.getRenderer(index);
         const data = runway.source.getData(index, this);
 
-        renderer.update($el, data, this);
-      }
+        renderer.update(el, data, this);
+      });
     } catch (err) {
       throw err;
     } finally {
@@ -439,7 +440,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
   protected setNodesStyles(nodes: IChangedNodes) {
     const runway = this.getRunway();
 
-    for (const { node, index } of nodes) {
+    nodes.forEach(({node, index}) => {
       const {x, y} = execute(() => runway.source.getOffset(index, this), {x: '0', y: 0});
 
       node.dataset.index = String(index);
@@ -449,7 +450,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
       node.style.width = runway.source.getWidth(index, this);
       node.dataset.column = execute(() => String(runway.source.getColumn(index, this)), '1');
       node.style.transform = node.style.webkitTransform = this.transformTemplate(x, runway.source.getScrollTop(index, this) + y);
-    }
+    });
   }
 
   protected getFirstScreenItem(initialAnchorItem: number, scrollTop: number): number {
@@ -566,9 +567,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
     this.runways = {};
 
     if (Array.isArray(sources)) {
-      for (const source of sources) {
-        this.addRunway(source);
-      }
+      sources.forEach((source) => this.addRunway(source));
     } else if (sources) {
       this.addRunway(sources as ISource<T>);
     } else {
