@@ -1,4 +1,5 @@
 import { IEvents } from './events';
+import { ITinySet } from './TinySet';
 
 export type IChangedNodes = Array<{node: HTMLElement, index: number}>;
 
@@ -23,7 +24,7 @@ export interface IRunway<T> {
   requestInProgress: boolean;
   runwayMaxScrollTop: number;
   nodes: {[key: string]: HTMLElement};
-  screenNodes: Set<HTMLElement>;
+  screenNodes: ITinySet<HTMLElement>;
   source: ISource<T>;
 }
 

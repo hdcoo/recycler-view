@@ -2,6 +2,7 @@ import EventEmitter from './helpers/EventEmitter';
 import ScrollerOperations from './helpers/ScrollerOperations';
 import ScrollListener from './eventListeners/ScrollListener';
 import ResizeListener from './eventListeners/ResizeListener';
+import TinySet from './helpers/TinySet';
 import {
   Exceptions,
   execute,
@@ -597,17 +598,17 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
       requestInProgress: false,
       runwayMaxScrollTop: 0,
       nodes: {},
-      screenNodes: new Set(),
+      screenNodes: new TinySet(),
       source,
     };
   }
 
   protected static removeScreenNodes<U>(runway: IRunway<U>) {
-    for (const node of runway.screenNodes.values()) {
+    runway.screenNodes.map((node) => {
       if (node.parentNode) {
         node.parentNode.removeChild(node);
         runway.screenNodes.delete(node);
       }
-    }
+    });
   }
 }

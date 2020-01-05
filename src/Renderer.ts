@@ -1,10 +1,7 @@
 import { IRenderer, IRecycler, IQueue } from './interfaces/recycler';
 
 export default abstract class Renderer<T> implements IRenderer<T> {
-  protected queue: IQueue = {
-    unused: [],
-    using: new Set()
-  };
+  protected abstract queue: IQueue;
 
   public render(data: T, recycler: IRecycler<T>): HTMLElement {
     // 从 queue.unused 中弹出一个节点
