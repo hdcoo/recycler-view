@@ -3,7 +3,7 @@ export interface ITinySet<T> {
   add(value: T): boolean;
   has(value: T): boolean;
   delete(value: T): boolean;
-  map(handler: (value: T) => void): void;
+  forEach(handler: (value: T) => void): void;
 }
 
 export interface ITinySetConstructor {

@@ -603,7 +603,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
   }
 
   protected static removeScreenNodes<U>(runway: IRunway<U>) {
-    runway.screenNodes.map((node) => {
+    runway.screenNodes.forEach((node) => {
       if (node.parentNode) {
         node.parentNode.removeChild(node);
         runway.screenNodes.delete(node);

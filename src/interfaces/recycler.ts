@@ -24,7 +24,7 @@ export interface IRunway<T> {
   requestInProgress: boolean;
   runwayMaxScrollTop: number;
   nodes: {[key: string]: HTMLElement};
-  screenNodes: ITinySet<HTMLElement>;
+  screenNodes: ITinySet<HTMLElement> | Set<HTMLElement>;
   source: ISource<T>;
 }
 
@@ -60,7 +60,7 @@ export interface IRecycler<T> extends IEvents {
 
 export interface IQueue {
   unused: HTMLElement[];
-  using: ITinySet<HTMLElement>;
+  using: ITinySet<HTMLElement> | Set<HTMLElement>;
 }
 
 export interface IRenderer<T> {
