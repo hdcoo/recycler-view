@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Source } from 'dist';
+import { Source } from '../dist/recycler-view';
 
 export default class MySource extends Source {
   constructor() {

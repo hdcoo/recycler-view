@@ -1,4 +1,4 @@
-import { Renderer, LazyLoader } from 'dist';
+import { Renderer, LazyLoader } from '../dist/recycler-view';
 
 export default class MyRenderer extends Renderer {
   constructor() {
