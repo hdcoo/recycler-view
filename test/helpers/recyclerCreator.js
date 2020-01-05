@@ -52,11 +52,6 @@ export class SourceWithNoData extends MySource {
 export class MyRenderer extends Renderer {
   constructor() {
     super();
-
-    this.queue = {
-      using: new Set(),
-      unused: []
-    };
   }
 
   createElement(data) {
@@ -72,12 +67,6 @@ export class MyRenderer extends Renderer {
 export class RendererWithLazyLoader extends Renderer {
   constructor() {
     super();
-
-    this.queue = {
-      using: new Set(),
-      unused: []
-    };
-
     this.lazyLoader = new LazyLoader();
   }
   
