@@ -1,6 +1,6 @@
 {
   "name": "recycler-view",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "Infinite scroll with Dom recycle",
   "sideEffects": false,
   "scripts": {
@@ -14,7 +14,8 @@
     "scroll",
     "infinite"
   ],
-  "main": "dist/index.js",
+  "main": "dist/recycler-view.js",
+  "module": "dist/recycler-view.esm.js",
   "author": "hdcoo",
   "license": "MIT",
   "repository": "https://github.com/hdcoo/recycler-view.git",
