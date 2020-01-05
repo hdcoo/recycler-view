@@ -2,13 +2,13 @@ module.exports = function (api) {
   api.cache(true);
   
   return {
-    "presets": [
+    presets: [
       [
         "@babel/preset-env",
         {
-          "modules": false,
-          "useBuiltIns": "usage",
-          "corejs": 3
+          modules: false,
+          useBuiltIns: "usage",
+          corejs: 3
         }
       ]
     ]
