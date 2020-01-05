@@ -53,7 +53,7 @@ describe('Window as scroller', function () {
     
     const runway = this.getRunway();
 
-    runway.screenNodes.map((el) => {
+    runway.screenNodes.forEach((el) => {
       const { index } = el.dataset;
       expect(getTranslateY(el)).toBe(runway.source.getScrollTop(index));
     });

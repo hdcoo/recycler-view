@@ -50,7 +50,7 @@ export default abstract class LinkedList {
     return true;
   }
 
-  public abstract map(handler: (...args: any) => void): void;
+  public abstract forEach(handler: (...args: any) => void): void;
 
   protected static isValid(value: any): boolean {
     return value && typeof value === 'object';

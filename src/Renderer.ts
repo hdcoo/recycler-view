@@ -48,6 +48,6 @@ export default abstract class Renderer<T> implements IRenderer<T> {
   }
 
   protected mapUsing(fn: (el: HTMLElement) => void) {
-    this.queue.using.map((el) => fn(el));
+    this.queue.using.forEach((el) => fn(el));
   }
 }

@@ -1,4 +1,4 @@
-import TinySet from "src/helpers/TinySet";
+import { TinySet } from "src/helpers/TinySet";
 
 describe('TinySet', function () {
   beforeEach(function () {
@@ -39,23 +39,9 @@ describe('TinySet', function () {
     const order = [this.a, this.b, this.d, this.c];
     this.tinySet.add(this.d);
     this.tinySet.add(this.c);
-    this.tinySet.map((item) => {
+    this.tinySet.forEach((item) => {
       expect(order[i++].value).toBe(item.value);
     })
-  });
-
-  it('edge case', function () {
-    const { tinySet } = this;
-
-    expect(tinySet.add(null)).toBe(false);
-    expect(tinySet.add(1)).toBe(false);
-    expect(tinySet.add('1')).toBe(false);
-    expect(tinySet.add(true)).toBe(false);
-    expect(tinySet.add(Symbol())).toBe(false);
-    expect(tinySet.add(BigInt(23434))).toBe(false);
-    expect(tinySet.add()).toBe(false);
-
-    expect(tinySet.size).toBe(2);
   });
 
   it('integrated test', function () {
@@ -88,9 +74,6 @@ describe('TinySet', function () {
 
     tinySet.add(c);
     tinySet.add(b);
-    tinySet.add(1);
-    tinySet.add(null);
-    tinySet.add();
 
     expect(tinySet.has(a)).toBe(true);
     expect(tinySet.has({value: 1})).toBe(false);
@@ -99,7 +82,7 @@ describe('TinySet', function () {
     let i = 0;
     const order = [d, a, c, b];
 
-    tinySet.map((item) => {
+    tinySet.forEach((item) => {
       expect(order[i++].value).toBe(item.value);
       tinySet.delete(item);
     });

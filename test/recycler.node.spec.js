@@ -51,7 +51,7 @@ describe('HTMLElement as scroller', function () {
     
     const runway = this.getRunway();
 
-    runway.screenNodes.map((el) => {
+    runway.screenNodes.forEach((el) => {
       const { index } = el.dataset;
       expect(getTranslateY(el)).toBe(runway.source.getScrollTop(index));
     });
@@ -88,12 +88,12 @@ describe('HTMLElement as scroller', function () {
     
     recycler.forceUpdate();
 
-    runway.screenNodes.map((el) => {
+    runway.screenNodes.forEach((el) => {
       expect(el.renderCount).toBe(2);
     });
     recycler.inPlaceUpdate();
 
-    runway.screenNodes.map((el) => {
+    runway.screenNodes.forEach((el) => {
       expect(el.renderCount).toBe(3);
     });
   });

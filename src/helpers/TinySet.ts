@@ -2,7 +2,7 @@ import LinkedList from './LinkedList';
 
 // Implemented with linked list
 // This data structure only store Object and Array
-export default class TinySet extends LinkedList {
+export class TinySet extends LinkedList {
   constructor(values?: any[]) {
     super('tiny-set');
 
@@ -27,7 +27,7 @@ export default class TinySet extends LinkedList {
     return true;
   }
 
-  public map(handler: (value: any) => void) {
+  public forEach(handler: (value: any) => void) {
     let value = this.head[this.uuid].next;
 
     while (value !== this.tail) {
@@ -37,3 +37,5 @@ export default class TinySet extends LinkedList {
     }
   }
 }
+
+export default typeof Set === 'function' ? Set : TinySet;

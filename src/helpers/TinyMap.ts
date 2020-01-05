@@ -1,7 +1,7 @@
 import LinkedList, { IValue } from './LinkedList';
 
-export default class TinyMap<T, U> extends LinkedList {
-  constructor(values?: Array<[T, U]>) {
+export class TinyMap<T, U> extends LinkedList {
+  constructor(values?: Array<[T, U]> | null) {
     super('tiny-map');
 
     if (Array.isArray(values)) {
@@ -43,14 +43,16 @@ export default class TinyMap<T, U> extends LinkedList {
     return true;
   }
 
-  public map(handler: (key: IValue, value: U) => void): void {
+  public forEach(handler: (value: U, key: IValue) => void): void {
     let key = this.head[this.uuid].next;
 
     while (key !== this.tail) {
       const next = key[this.uuid].next;
       const value = key[this.uuid].value;
-      handler(key, value);
+      handler(value, key);
       key = next;
     }
   }
 }
+
+export default typeof Map === 'function' ? Map : TinyMap;
