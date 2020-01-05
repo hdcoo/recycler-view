@@ -1,4 +1,4 @@
-import { IEvents } from './events';
+import { IEvents } from './Events';
 import { ITinySet } from './TinySet';
 
 export type IChangedNodes = Array<{node: HTMLElement, index: number}>;
@@ -73,7 +73,7 @@ export interface IRenderer<T> {
 }
 
 export interface ISource<T> {
-  key: string;
+  key?: string;
   getScrollTop(index: number, recycler: IRecycler<T>): number;
   getHeight(index: number, recycler: IRecycler<T>): number;
   getWidth(index: number, recycler: IRecycler<T>): string;

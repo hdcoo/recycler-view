@@ -19,7 +19,7 @@ import {
   IChangedNodes,
   RecyclerEvents,
   IRenderer
-} from './interfaces/recycler';
+} from './interfaces/Recycler';
 
 export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
   public static readonly Events = RecyclerEvents;
@@ -245,7 +245,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
       });
     }
 
-    this.scrollTo(runway.scrollTop, () => {
+    return this.scrollTo(runway.scrollTop, () => {
       this.emit(Recycler.Events.RunwaySwitched, this);
       execute(done);
     });

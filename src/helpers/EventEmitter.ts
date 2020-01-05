@@ -1,4 +1,4 @@
-import { IEvents } from '../interfaces/events';
+import { IEvents } from '../interfaces/Events';
 import { logger } from './util';
 
 export default class EventEmitter implements IEvents {
