@@ -23,6 +23,7 @@
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.7",
+    "@rollup/plugin-buble": "^0.21.0",
     "@types/jasmine": "^3.5.0",
     "@wessberg/rollup-plugin-ts": "^1.1.83",
     "axios": "^0.19.0",
