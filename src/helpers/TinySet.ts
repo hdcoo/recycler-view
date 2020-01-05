@@ -1,44 +1,14 @@
-import { uuid } from './util';
+import LinkedList from './LinkedList';
 
-interface IValue {
-  [key: string]: IPoint;
-}
-
-interface IPoint {
-  prev?: IValue;
-  next?: IValue;
-}
-
-/**
- * Implemented with linked list
- * This data structure only store Object and Array
- * */
-export default class TinySet {
-  private readonly uuid: string;
-  private listSize: number = 0;
-  private head: IValue = {};
-  private tail: IValue = {};
-
-  public get size(): number {
-    return this.listSize;
-  }
-
+// Implemented with linked list
+// This data structure only store Object and Array
+export default class TinySet extends LinkedList {
   constructor(values?: any[]) {
-    this.uuid = `--tiny-set-${uuid()}--`;
-
-    this.head[this.uuid] = {};
-    this.tail[this.uuid] = {};
-
-    this.head[this.uuid].next = this.tail;
-    this.tail[this.uuid].prev = this.head;
+    super('tiny-set');
 
     if (Array.isArray(values)) {
       values.forEach((value) => this.add(value));
     }
-  }
-
-  public has(value: any): boolean {
-    return TinySet.isValid(value) && !!value[this.uuid];
   }
 
   public add(value: any): boolean {
@@ -57,21 +27,6 @@ export default class TinySet {
     return true;
   }
 
-  public delete(value: any): boolean {
-    if (!this.has(value) || !TinySet.isValid(value)) {
-      return false;
-    }
-
-    const point: IPoint = value[this.uuid];
-
-    point.prev[this.uuid].next = point.next;
-    point.next[this.uuid].prev = point.prev;
-
-    this.listSize -= 1;
-
-    return delete value[this.uuid];
-  }
-
   public map(handler: (value: any) => void) {
     let value = this.head[this.uuid].next;
 
@@ -80,9 +35,5 @@ export default class TinySet {
       handler(value);
       value = next;
     }
-  }
-
-  private static isValid(value: any): boolean {
-    return value && typeof value === 'object';
   }
 }
