@@ -50,13 +50,13 @@ describe('HTMLElement as scroller', function () {
     await this.recycler.scrollTo(5630);
     
     const runway = this.getRunway();
-    
-    for (const el of runway.screenNodes.values()) {
+
+    runway.screenNodes.map((el) => {
       const { index } = el.dataset;
       expect(getTranslateY(el)).toBe(runway.source.getScrollTop(index));
-    }
+    });
   });
-  
+
   it('render correct with preserved space', async function () {
     let runway;
     const { recycler } = this;
@@ -87,16 +87,15 @@ describe('HTMLElement as scroller', function () {
     const runway = recycler.getRunway();
     
     recycler.forceUpdate();
-    
-    for (const el of runway.screenNodes.values()) {
+
+    runway.screenNodes.map((el) => {
       expect(el.renderCount).toBe(2);
-    }
-    
+    });
     recycler.inPlaceUpdate();
-  
-    for (const el of runway.screenNodes.values()) {
+
+    runway.screenNodes.map((el) => {
       expect(el.renderCount).toBe(3);
-    }
+    });
   });
   
   it('load more should be executed', async function () {

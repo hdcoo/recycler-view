@@ -34,14 +34,14 @@ describe('LazyLoader', function () {
     await recycler.scrollTo(5486);
     await sleep(300);
     await recycler.scrollTo(5496);
-    
-    for (const el of recycler.getRunway().screenNodes.values()) {
+
+    recycler.getRunway().screenNodes.map((el) => {
       const state = el.getAttribute('lazy');
       if (state === 'loaded' || state === 'complete') {
         expect(el.style.backgroundImage).toBe('url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAAZSURBVDhPY3hAIhjVQAwY1UAMGHQaHjwAAD9boB9HiJ0WAAAAAElFTkSuQmCC")');
       } else if (state === 'error') {
         expect(el.style.backgroundImage).toBe('url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")');
       }
-    }
+    });
   });
 });
