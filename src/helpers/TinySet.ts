@@ -1,9 +1,10 @@
 import LinkedList from './LinkedList';
+import { IValue } from '../interfaces/LinkedList';
 
 // Implemented with linked list
 // This data structure only store Object and Array
-export class TinySet extends LinkedList {
-  constructor(values?: any[]) {
+export class TinySet<T extends IValue<T>> extends LinkedList<T> {
+  constructor(values?: T[]) {
     super('tiny-set');
 
     if (Array.isArray(values)) {
@@ -11,14 +12,14 @@ export class TinySet extends LinkedList {
     }
   }
 
-  public add(value: any): boolean {
+  public add(value: T): boolean {
     if (this.has(value) || !TinySet.isValid(value)) {
       return false;
     }
 
-    value[this.uuid] = {
+    (value as unknown as IValue<T>)[this.uuid] = {
       prev: this.tail[this.uuid].prev,
-      next: this.tail
+      next: this.tail as T
     };
     this.tail[this.uuid].prev[this.uuid].next = value;
     this.tail[this.uuid].prev = value;
@@ -27,7 +28,7 @@ export class TinySet extends LinkedList {
     return true;
   }
 
-  public forEach(handler: (value: any) => void) {
+  public forEach(handler: (value: T) => void) {
     let value = this.head[this.uuid].next;
 
     while (value !== this.tail) {
@@ -38,4 +39,6 @@ export class TinySet extends LinkedList {
   }
 }
 
-export default typeof Set === 'function' ? Set : TinySet;
+export default function newSet<T>(values?: T[]) {
+  return typeof Set === 'function' ? new Set(values) : new TinySet(values as any[]);
+}

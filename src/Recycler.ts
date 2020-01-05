@@ -2,7 +2,7 @@ import EventEmitter from './helpers/EventEmitter';
 import ScrollerOperations from './helpers/ScrollerOperations';
 import ScrollListener from './eventListeners/ScrollListener';
 import ResizeListener from './eventListeners/ResizeListener';
-import TinySet from './helpers/TinySet';
+import newSet from './helpers/TinySet';
 import {
   Exceptions,
   execute,
@@ -597,7 +597,7 @@ export default class Recycler<T> extends EventEmitter implements IRecycler<T> {
       requestInProgress: false,
       runwayMaxScrollTop: 0,
       nodes: {},
-      screenNodes: new TinySet(),
+      screenNodes: newSet(),
       source,
     };
   }
