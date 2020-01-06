@@ -1,8 +1,9 @@
 import rollupPluginTs from '@wessberg/rollup-plugin-ts';
 import buble from "@rollup/plugin-buble";
+import packageJson from './package.json';
 
 const banner = `/*!
- * recycler-view.js v1.0.1
+ * recycler-view.js v${packageJson.version}
  * (c) 2019-2020 hdcoo
  * Released under the MIT License.
  */`;
