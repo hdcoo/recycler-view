@@ -1,6 +1,6 @@
 {
   "name": "recycler-view",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Infinite scroll with Dom recycle",
   "sideEffects": false,
   "scripts": {
