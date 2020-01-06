@@ -1,8 +1,4 @@
-export type Value<T> = {
-  [P in keyof T]: T[P];
-}
-
-export interface IValue<T extends Value<T>> {
+export interface IValue<T> {
   [key: string]: IPoint<T>;
 }
 
