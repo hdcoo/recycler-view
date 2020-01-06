@@ -3,7 +3,7 @@ import { IValue } from '../interfaces/LinkedList';
 
 // Implemented with linked list
 // This data structure only store Object and Array
-export class TinyMap<T extends IValue<T>, U> extends LinkedList<T> {
+export class TinyMap<T extends object, U> extends LinkedList<T> {
   constructor(values?: Array<[T, U]> | null) {
     super('tiny-map');
 
@@ -21,7 +21,7 @@ export class TinyMap<T extends IValue<T>, U> extends LinkedList<T> {
       return undefined;
     }
 
-    return key[this.uuid].value;
+    return (key as IValue<T>)[this.uuid].value;
   }
 
   public set(key: T, value: U): boolean {
@@ -30,16 +30,16 @@ export class TinyMap<T extends IValue<T>, U> extends LinkedList<T> {
     }
 
     if (this.has(key)) {
-      key[this.uuid].value = value;
+      (key as IValue<T>)[this.uuid].value = value;
       return true;
     }
 
-    (key as unknown as IValue<T>)[this.uuid] = {
+    (key as IValue<T>)[this.uuid] = {
       prev: this.tail[this.uuid].prev,
       next: this.tail as T,
       value
     };
-    this.tail[this.uuid].prev[this.uuid].next = key;
+    (this.tail[this.uuid].prev as IValue<T>)[this.uuid].next = key;
     this.tail[this.uuid].prev = key;
     this.listSize += 1;
 
@@ -50,14 +50,14 @@ export class TinyMap<T extends IValue<T>, U> extends LinkedList<T> {
     let key = this.head[this.uuid].next;
 
     while (key !== this.tail) {
-      const next = key[this.uuid].next;
-      const value = key[this.uuid].value;
+      const next = (key as IValue<T>)[this.uuid].next;
+      const value = (key as IValue<T>)[this.uuid].value;
       handler(value, key);
       key = next;
     }
   }
 }
 
-export default function newMap<K, V>(values?: Array<[K, V]> | null) {
-  return typeof Map === 'function' ? new Map(values) : new TinyMap(values as Array<[any, V]>);
+export default function newMap<K extends object, V>(values?: Array<[K, V]> | null) {
+  return typeof Map === 'function' ? new Map(values) : new TinyMap(values);
 }

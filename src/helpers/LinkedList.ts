@@ -1,7 +1,7 @@
 import { uuid } from './util';
 import { IValue } from '../interfaces/LinkedList';
 
-export default abstract class LinkedList<T extends IValue<T>> {
+export default abstract class LinkedList<T extends object> {
   protected readonly uuid: string;
   protected listSize: number = 0;
   protected head: IValue<T> = {};
@@ -22,7 +22,7 @@ export default abstract class LinkedList<T extends IValue<T>> {
   }
 
   public has(value: T): boolean {
-    return LinkedList.isValid(value) && !!value[this.uuid];
+    return LinkedList.isValid(value) && !!(value as IValue<T>)[this.uuid];
   }
 
   public delete(value: T): boolean {
@@ -30,13 +30,14 @@ export default abstract class LinkedList<T extends IValue<T>> {
       return false;
     }
 
-    const point = value[this.uuid];
+    const val = value as IValue<T>;
+    const point = val[this.uuid];
 
-    point.prev[this.uuid].next = point.next;
-    point.next[this.uuid].prev = point.prev;
+    (point.prev as IValue<T>)[this.uuid].next = point.next;
+    (point.next as IValue<T>)[this.uuid].prev = point.prev;
 
     this.listSize -= 1;
-    delete value[this.uuid];
+    delete val[this.uuid];
 
     return true;
   }

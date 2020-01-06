@@ -1,10 +1,6 @@
 import { IEvents } from './Events';
 import { ITinySet } from './TinySet';
 
-interface IHTMLElement extends HTMLElement {
-  [key: string]: any;
-}
-
 export type IChangedNodes = Array<{node: HTMLElement, index: number}>;
 
 export interface IOptions<T> {

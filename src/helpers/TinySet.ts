@@ -3,7 +3,7 @@ import { IValue } from '../interfaces/LinkedList';
 
 // Implemented with linked list
 // This data structure only store Object and Array
-export class TinySet<T extends IValue<T>> extends LinkedList<T> {
+export class TinySet<T extends object> extends LinkedList<T> {
   constructor(values?: T[]) {
     super('tiny-set');
 
@@ -17,11 +17,11 @@ export class TinySet<T extends IValue<T>> extends LinkedList<T> {
       return false;
     }
 
-    (value as unknown as IValue<T>)[this.uuid] = {
+    (value as IValue<T>)[this.uuid] = {
       prev: this.tail[this.uuid].prev,
       next: this.tail as T
     };
-    this.tail[this.uuid].prev[this.uuid].next = value;
+    (this.tail[this.uuid].prev as IValue<T>)[this.uuid].next = value;
     this.tail[this.uuid].prev = value;
     this.listSize += 1;
 
@@ -31,14 +31,14 @@ export class TinySet<T extends IValue<T>> extends LinkedList<T> {
   public forEach(handler: (value: T) => void) {
     let value = this.head[this.uuid].next;
 
-    while (value !== this.tail) {
-      const next = value[this.uuid].next;
+    while (value !== this.tail as T) {
+      const next = (value as IValue<T>)[this.uuid].next;
       handler(value);
       value = next;
     }
   }
 }
 
-export default function newSet<T>(values?: T[]) {
-  return typeof Set === 'function' ? new Set(values) : new TinySet(values as any[]);
+export default function newSet<T extends object>(values?: T[]) {
+  return typeof Set === 'function' ? new Set(values) : new TinySet(values);
 }
