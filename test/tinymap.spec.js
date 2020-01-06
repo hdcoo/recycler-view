@@ -35,8 +35,10 @@ describe('TinyMap', function () {
 
   it('set should work well', function () {
     this.tinyMap.set(this.c, this.c.value);
+    expect(this.tinyMap.get(this.c)).toBe(this.c.value);
+    this.tinyMap.set(this.c, 111);
+    expect(this.tinyMap.get(this.c)).toBe(111);
     expect(this.tinyMap.size).toBe(3);
-    expect(this.tinyMap.has(this.c)).toBe(true);
   });
 
   it('map should work well', function () {
