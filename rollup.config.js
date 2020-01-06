@@ -10,7 +10,6 @@ const banner = `/*!
 const tsconfig = {
   target: 'es6',
   module: 'es6',
-  sourceMap: true,
   declaration: true
 };
 
