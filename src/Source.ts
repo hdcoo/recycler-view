@@ -1,4 +1,4 @@
-import { ISource, IRecycler } from './interfaces/recycler';
+import { ISource, IRecycler } from './interfaces/Recycler';
 
 export default abstract class Source<T> implements ISource<T> {
   public abstract key: string;

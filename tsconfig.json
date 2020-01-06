@@ -10,8 +10,7 @@
     "pretty": true,
     "strictNullChecks": false,
     "downlevelIteration": true,
-    "declaration": true,
-    "lib": ["es2019", "dom"]
+    "declaration": true
   },
   "include": ["src/**/*"]
 }

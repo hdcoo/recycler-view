@@ -1,9 +1,9 @@
-import TinySet from './helpers/TinySet';
-import { IRenderer, IRecycler, IQueue } from './interfaces/recycler';
+import newSet from './helpers/TinySet';
+import { IRenderer, IRecycler, IQueue } from './interfaces/Recycler';
 
 export default abstract class Renderer<T> implements IRenderer<T> {
   protected queue: IQueue = {
-    using: new TinySet(),
+    using: newSet(),
     unused: []
   };
 

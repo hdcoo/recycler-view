@@ -1,16 +1,15 @@
-import TinyMap from './helpers/TinyMap';
+import newMap from './helpers/TinyMap';
 import {getAnimationEndEventName, loadImage, throttle, isFunction} from './helpers/util';
-import {IRecycler, RecyclerEvents} from './interfaces/recycler';
+import {IRecycler, RecyclerEvents} from './interfaces/Recycler';
 import { ITinyMap } from './interfaces/TinyMap';
-import {IBinding, IElementInfo, IHTMLElement, ImageTypes, ILazyLoaderOptions, IPlaceholders} from './interfaces/lazyload';
+import {IBinding, IElementInfo, IHTMLElement, ImageTypes, ILazyLoaderOptions, IPlaceholders} from './interfaces/LazyLoader';
 
 const ANIMATION_END = getAnimationEndEventName();
 
 export default class LazyLoader {
   public static DEFAULT_PLACEHOLDER = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
-  // @ts-ignore
-  private readonly elementsInfo: ITinyMap<IHTMLElement, IElementInfo> | Map<IHTMLElement, IElementInfo> = new TinyMap();
+  private readonly elementsInfo: ITinyMap<IHTMLElement, IElementInfo> | Map<IHTMLElement, IElementInfo> = newMap();
   private readonly speedThreshold: number;
   private readonly placeholders: IPlaceholders;
 

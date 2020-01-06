@@ -7,6 +7,12 @@ const banner = `/*!
  * Released under the MIT License.
  */`;
 
+const tsconfig = {
+  target: 'es6',
+  module: 'es6',
+  declaration: true
+};
+
 export default [
   {
     input: 'src/index.ts',
@@ -17,10 +23,8 @@ export default [
     },
     plugins: [
       rollupPluginTs({
+        tsconfig,
         browserslist: false,
-        tsconfig: {
-          target: 'es6'
-        }
       }),
       buble()
     ]
@@ -34,10 +38,8 @@ export default [
     },
     plugins: [
       rollupPluginTs({
-        browserslist: false,
-        tsconfig: {
-          target: 'es6'
-        }
+        tsconfig,
+        browserslist: false
       }),
       buble()
     ]
